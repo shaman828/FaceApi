@@ -1,5 +1,5 @@
 ﻿/**************************************************************************************************
- * Author:      ChenJing
+ * Author:      bachelor828@live.com
  * FileName:    FaceApiHelper
  * FrameWork:   4.5.2
  * CreateDate:  2016/9/9 11:24:33
@@ -32,9 +32,10 @@ namespace FaceApiWpf.ViewModel
             ServiceKey = serviceKey;
         }
 
-        public double CompareFace(string imgPath1,string imgPath2,string faceListId=string.Empty)
+        public double CompareFace(string imgPath1,string imgPath2,string faceListId="")
         {
-            
+            //todo
+            return 0;
         }
     }
 }

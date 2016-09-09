@@ -1,5 +1,5 @@
 ﻿/**************************************************************************************************
- * Author:      ChenJing
+ * Author:      bachelor828@live.com
  * FileName:    Camera
  * FrameWork:   4.5.2
  * CreateDate:  2016/9/7 11:25:50

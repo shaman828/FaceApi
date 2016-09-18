@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 
 namespace FaceApiWpf.ViewModel
 {
+    /// <summary>
+    /// 微软感知服务--人脸识别
+    /// </summary>
     public class FaceApiHelper
     {
         #region Constructors
@@ -108,6 +111,16 @@ namespace FaceApiWpf.ViewModel
 
             return confidenceet;
         }
+        /// <summary>
+        /// 在容器中查找是否存在targetImg
+        /// </summary>
+        /// <param name="targetImg">目标图片</param>
+        /// <returns></returns>
+        public async Task<double> FindSimilarInFacelist(string targetImg)
+        {
+            Guid faceId = UploadTargetImg(targetImg).Result;
+            return await FindSimilar(faceId);
+        }
 
         /// <summary>
         /// 上传文件夹中所有图片
@@ -120,11 +133,10 @@ namespace FaceApiWpf.ViewModel
                 return;
             }
             var pattern = @"\.(jpg|png|JPG|PNG)$";
-            var imgs = Directory.EnumerateFiles(folder, pattern, SearchOption.AllDirectories);
+            IEnumerable<string> imgs = Directory.EnumerateFiles(folder, pattern, SearchOption.AllDirectories);
             List<Task> tasks = new List<Task>();
             if (imgs.Any())
             {
-
                 foreach (var img in imgs)
                 {
                     tasks.Add(Task.Factory.StartNew(async (obj) =>
@@ -180,9 +192,15 @@ namespace FaceApiWpf.ViewModel
                 using (var stream = File.OpenRead(img))
                 {
                     Face[] faces = await faceServiceClient.DetectAsync(stream);
+
                     if (faces.Any())
                     {
-                        imgFaceId = faces.FirstOrDefault().FaceId;
+                        var item = faces.FirstOrDefault();
+                        if (item != null)
+                        {
+                            imgFaceId = item.FaceId;
+                        }
+
                     }
                 }
             }
@@ -191,10 +209,10 @@ namespace FaceApiWpf.ViewModel
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="listId"></param>
-        public void DeleteFaceListByFaceId(string listId)
+        /// <param name="listId">faceListId</param>
+        public async void DeleteFaceListByFaceId(string listId)
         {
-            //todo
+            await faceServiceClient.DeleteFaceListAsync(listId);
         }
         /// <summary>
         /// 删除所有FaceList(当前faceList除外)

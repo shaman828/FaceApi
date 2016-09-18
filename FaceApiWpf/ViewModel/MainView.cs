@@ -93,13 +93,13 @@ namespace FaceApiWpf.ViewModel
 
             #region 定时清除冗余信息
 
-            DispatcherTimer timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 1, 0) };
+            DispatcherTimer timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 10, 0) };
 
             timer.Tick += async (a, b) =>
             {
                 if (faceServiceClient != null)
                 {
-                    var list = await faceServiceClient.ListFaceListsAsync();
+                    var list = await faceServiceClient.GetAllFaceList();
                     List<Task> tasks = new List<Task>();
                     foreach (var item in list)
                     {
@@ -107,7 +107,7 @@ namespace FaceApiWpf.ViewModel
                         {
                             var t = Task.Factory.StartNew(async () =>
                             {
-                                faceServiceClient.DeleteFaceListAsync(item.FaceListId);
+                                faceServiceClient.DeleteFaceListByFaceId(item.FaceListId);
                             });
                             tasks.Add(t);
                         }
@@ -133,7 +133,7 @@ namespace FaceApiWpf.ViewModel
         private int currentIndex = 0;
         private WorkerInfo currentWorker = new WorkerInfo();
         private string faceListName = string.Empty;
-        private FaceServiceClient faceServiceClient;
+        private FaceApiHelper faceServiceClient;
         private string log;
         private RelayCommand nextCmd;
         private string photo = "camera\\";
@@ -360,7 +360,7 @@ namespace FaceApiWpf.ViewModel
             #region 初始化感知服务
             faceListName = Guid.NewGuid().ToString();
             facelistId.Add(faceListName);
-            faceServiceClient = new FaceServiceClient(ServiceKey);
+            faceServiceClient = new FaceApiHelper(ServiceKey);
 
             #endregion
             await faceServiceClient.CreateFaceListAsync(faceListName, faceListName, "test");

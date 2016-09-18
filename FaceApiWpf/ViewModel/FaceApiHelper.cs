@@ -40,6 +40,13 @@ namespace FaceApiWpf.ViewModel
             }
             FaceListId = facelistId;
             faceServiceClient = new FaceServiceClient(ServiceKey);
+            //判定是否已经存在
+            FaceList isExist = GetFaceListInfoById(FaceListId).Result;
+            if (isExist == null)
+            {
+                var task = faceServiceClient.CreateFaceListAsync(FaceListId, FaceListId, FaceListId);
+                task.Wait();
+            }
         }
 
         #endregion Constructors
@@ -207,7 +214,7 @@ namespace FaceApiWpf.ViewModel
             return imgFaceId;
         }
         /// <summary>
-        /// 
+        /// 删除FaceList
         /// </summary>
         /// <param name="listId">faceListId</param>
         public async void DeleteFaceListByFaceId(string listId)
@@ -228,10 +235,22 @@ namespace FaceApiWpf.ViewModel
                 }
             }
         }
-
+       /// <summary>
+       /// 根据facelisId获取其相关信息
+       /// </summary>
+       /// <param name="listId">FaceListId</param>
+       /// <returns></returns>
         public async Task<FaceList> GetFaceListInfoById(string listId)
         {
             return await faceServiceClient.GetFaceListAsync(listId);
+        }
+        /// <summary>
+        /// 获取当前用户下所有facelist
+        /// </summary>
+        /// <returns></returns>
+        public async Task<FaceListMetadata[]> GetAllFaceList()
+        {
+            return await faceServiceClient.ListFaceListsAsync();
         }
         /// <summary>
         /// 获取当前facelist信息
